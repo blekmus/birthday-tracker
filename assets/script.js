@@ -20,7 +20,18 @@ function decryptCypher(cypher) {
    
     try {
         let output = JSON.parse(decrypted.toString(CryptoJS.enc.Utf8))
-        cardFormat(output)
+
+        data = {
+            "bob": [3, 6],
+            "bill": [9, 12],
+            "marvin": [11, 20],
+            "bender": [10, 29],
+            "hugh": [1, 15],
+            "will": [12, 4],
+            "howard": [10, 2]
+        }
+
+        cardFormat(data)
     }
     catch(err) {
         console.log(err)

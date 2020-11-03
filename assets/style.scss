@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Itim&family=Noto+Sans+JP:wght@400;500;700&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap');
 // font-family: 'Itim', cursive;
 // font-family: 'Noto Sans JP', sans-serif;
 
@@ -49,9 +49,9 @@ header {
     justify-content: center;
 
     h1 {
-        font-size: 2em;
+        font-size: 2.2em;
         color: #4A4A4A;
-        font-family: 'Itim', cursive;
+        font-family: 'Nunito', sans-serif;
         font-weight: 700;
     }
 }
@@ -59,8 +59,8 @@ header {
 .lock-card {
     grid-area: content;
     background-color: #DBE7E4;         
-    height: 92%;
-    width: 80%;
+    height: 95%;
+    width: 85%;
     margin: 0 auto;
     border-radius: 15px;
     box-shadow: 10px 15px 20px #00000040;
@@ -136,17 +136,18 @@ header {
         p {
             font-family: 'Noto Sans JP', sans-serif;
             font-size: 14px;
-            font-weight: 400;
-            color: black;   
+            font-weight: 800;
+            color: #4A4A4A;   
             
             a {
                 text-decoration: none;
-                color: #1d92bf;
+                color: #131313;
             }
 
             span {
                 svg {
                     height: 12px;
+                    fill: #4A4A4A;
                 }
             }
         }
@@ -190,12 +191,12 @@ header {
             padding: 0 0 0 0;
             background: #FFF1E6;
             border-radius: 23px 0px 5px;
-            color: black;
+            color: #4A4A4A;
             text-align: center;
             line-height: 35px;
             font-family: sans-serif;
-            font-size: 1.2em;
-            font-weight: 400;
+            font-size: 1.1em;
+            font-weight: 500;
         }
 
         .date-text {
@@ -208,7 +209,7 @@ header {
             color: black;
             font-family: 'Noto Sans JP', sans-serif;
             font-weight: 400;
-            font-size: 2em;
+            font-size: 1.9em;
         }
     }
 }
@@ -255,6 +256,11 @@ header {
 
         .date-text {
             line-height: 170px;
+            font-size: 2em;
+        }
+
+        .date {
+            font-size: 1.2em;
         }
     }
 }
