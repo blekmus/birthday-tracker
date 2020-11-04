@@ -46,8 +46,12 @@ function cardFormat(text) {
     let contentData = Object.entries(text).map(dateTemplate).join('')
     dataContainer.innerHTML = contentData
 
-    document.body.classList.remove('lock')
-    document.body.classList.add('home')
+    cardLoadAnimation()
+
+    let cards = document.querySelectorAll('.track-card')
+    cards.forEach(card => {
+        card.addEventListener('click', cardAnimation)
+    })
 }
 
 function passError() {
@@ -194,6 +198,76 @@ function dateTextFormat(date) {
     }
 }
 
+
+
+
+function loadAnimation() {
+    anime.timeline({ 
+        easing: 'linear',
+        direction: 'normal',
+    })
+    .add({
+        targets: ".lock-card",
+        easing: "easeOutQuad",
+        duration: "900",
+        translateY: [+20, 0],
+        opacity: [0, 1]
+    }, 500)
+    .add({
+        targets: "header h1",
+        easing: "easeOutQuad",
+        duration: '700',
+        opacity: [0, 1],
+        scale: [0.9, 1],
+    }, '-=500')
+}
+
+function cardLoadAnimation() {
+    anime.timeline({ 
+        easing: 'linear',
+        direction: 'normal',
+    })
+    .add({
+        targets: "header h1",
+        easing: "easeInQuad",
+        duration: 250,
+        translateY: [0, 40],
+        opacity: [1, 0]
+    })
+    .add({
+        targets: ".lock-card",
+        easing: "easeInQuad",
+        duration: 300,
+        scale: [1, 0.9],
+        opacity: [1, 0],
+        endDelay: 400,
+        complete: () => {
+            document.body.classList.remove('lock')
+            document.body.classList.add('home')
+        }
+    }, '-=50')
+    .add({
+        targets: "header h1",
+        easing: "easeOutQuad",
+        duration: 1000,
+        translateY: [0, 0],
+        opacity: [0, 1]
+    })
+    .add({
+        targets: ".track-card",
+        easing: "easeOutQuad",
+        duration: 800,
+        translateY: [20, 0],
+        opacity: [0, 1],
+        delay: anime.stagger(200)
+    }, '-=800')
+}
+
+function cardAnimation(e) {
+}
+
+
+loadAnimation()
 passwordInputHandler()
 
 
