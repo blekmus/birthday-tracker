@@ -1,57 +1,5 @@
-function getWeekDay(date){
-    var weekdays = new Array(
-        "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
-    );
-    var day = date.getDay();
-    return weekdays[day];
-}
-
 function handleError(error) {
     console.error(error)
-}
-
-function loadCypher() {
-    fetch('assets/cypher.asc').then(response => response.text()).then(decryptCypher);
-}
-
-function decryptCypher(cypher) {
-    let passInput = document.querySelector('#password-input')
-    let decrypted = CryptoJS.AES.decrypt(cypher, passInput.value)
-   
-    try {
-        let output = JSON.parse(decrypted.toString(CryptoJS.enc.Utf8))
-
-        data = {
-            "bob": [3, 6],
-            "bill": [9, 12],
-            "marvin": [11, 20],
-            "bender": [10, 29],
-            "hugh": [1, 15],
-            "will": [12, 4],
-            "howard": [10, 2]
-        }
-
-        cardFormat(data)
-    }
-    catch(err) {
-        console.log(err)
-        passError()
-        return
-    }
-}
-
-function cardFormat(text) {
-    let dataContainer = document.querySelector('.track-card-container')
-
-    let contentData = Object.entries(text).map(dateTemplate).join('')
-    dataContainer.innerHTML = contentData
-
-    cardLoadAnimation()
-
-    let cards = document.querySelectorAll('.track-card')
-    cards.forEach(card => {
-        card.addEventListener('click', cardAnimation)
-    })
 }
 
 function passError() {
@@ -71,6 +19,8 @@ function passError() {
     notyf.error('Incorrect Password');
 }
 
+
+
 function passwordInputHandler() {
     let passBtn = document.querySelector('#password-btn')
     let passInput = document.querySelector('#password-input')
@@ -82,6 +32,112 @@ function passwordInputHandler() {
             loadCypher()
         }
     })
+}
+
+function loadCypher() {
+    fetch('assets/cypher.asc').then(response => response.text()).then(decryptCypher).catch(handleError)
+}
+
+function decryptCypher(cypher) {
+    let passInput = document.querySelector('#password-input')
+    let decrypted = CryptoJS.AES.decrypt(cypher, passInput.value)
+   
+    try {
+        let output = JSON.parse(decrypted.toString(CryptoJS.enc.Utf8))
+        cardFormat(output)
+    }
+    catch(err) {
+        console.log(err)
+        passError()
+        return
+    }
+}
+
+
+
+function cardFormat(text) {
+    let dataContainer = document.querySelector('.track-card-container')
+
+    let contentData = dataSort(Object.entries(text))
+    let contentDataMapped = contentData.map(dateTemplate).join('')
+    dataContainer.innerHTML = contentDataMapped
+
+    cardLoadAnimation()
+
+    let cards = document.querySelectorAll('.track-card')
+    cards.forEach(card => {
+        card.addEventListener('click', cardAnimation)
+    })
+}
+
+function dataSort(data) {
+    let today = new Date()
+    let cur_day = today.getDate()
+    let cur_month = today.getMonth() + 1
+
+    monthAfter = data.filter(entry => {
+        if (entry[1][0] > cur_month || entry[1][0] == cur_month && entry[1][1] >= cur_day)
+            return entry
+    })
+    monthBefore = data.filter(entry => {
+        if (entry[1][0] < cur_month || entry[1][0] == cur_month && entry[1][1] < cur_day)
+            return entry
+    })
+
+    let newMonthAfter = new Array()
+    for(i = cur_month;i < 13;i++) {
+        let monthEntries = monthAfter.filter(item => item[1][0] === i)
+
+        if (monthEntries.length == 0) {
+            continue
+        }
+
+        let newMonthEntries = new Array()
+        for(j = 0;j < monthEntries.length + 1;j++) {
+            lastNum = 0
+            for(const [index, value] of monthEntries.entries()) {
+                if (value[1][1] > lastNum) {
+                    lastNum = value[1][1]
+                    val = index
+                }
+            }
+
+            let entry = monthEntries[val]
+            newMonthEntries.unshift(entry)  
+            monthEntries.splice(val, 1)
+        }
+
+        newMonthAfter.push.apply(newMonthAfter, newMonthEntries)
+    }
+
+    let newMonthBefore = new Array()
+    for(i = 1;i < cur_month + 1;i++) {
+        let monthEntries = monthBefore.filter(item => item[1][0] === i)
+
+        if (monthEntries.length == 0) {
+            continue
+        }
+
+        let newMonthEntries = new Array()
+        for(j = 0;j < monthEntries.length + 1;j++) {
+            lastNum = 0
+            for(const [index, value] of monthEntries.entries()) {
+                if (value[1][1] > lastNum) {
+                    lastNum = value[1][1]
+                    val = index
+                }
+            }
+
+            let entry = monthEntries[val]
+            newMonthEntries.unshift(entry)  
+            monthEntries.splice(val, 1)
+        }
+
+        newMonthBefore.push.apply(newMonthBefore, newMonthEntries)
+    }
+
+    let sortedData = newMonthAfter.concat(newMonthBefore)
+    return sortedData
 }
 
 function dateTemplate(person) {
@@ -198,6 +254,13 @@ function dateTextFormat(date) {
     }
 }
 
+function getWeekDay(date){
+    var weekdays = new Array(
+        "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
+    );
+    var day = date.getDay();
+    return weekdays[day];
+}
 
 
 
@@ -216,10 +279,10 @@ function loadAnimation() {
     .add({
         targets: "header h1",
         easing: "easeOutQuad",
-        duration: '700',
+        duration: '500',
         opacity: [0, 1],
-        scale: [0.9, 1],
-    }, '-=500')
+        translateY: [5, 0],
+    }, '-=800')
 }
 
 function cardLoadAnimation() {
@@ -231,7 +294,7 @@ function cardLoadAnimation() {
         targets: "header h1",
         easing: "easeInQuad",
         duration: 250,
-        translateY: [0, 40],
+        translateY: [0, 5],
         opacity: [1, 0]
     })
     .add({
@@ -240,7 +303,7 @@ function cardLoadAnimation() {
         duration: 300,
         scale: [1, 0.9],
         opacity: [1, 0],
-        endDelay: 400,
+        endDelay: 900,
         complete: () => {
             document.body.classList.remove('lock')
             document.body.classList.add('home')
@@ -263,12 +326,31 @@ function cardLoadAnimation() {
     }, '-=800')
 }
 
-function cardAnimation(e) {
+function cardAnimation() {
+
 }
+
 
 
 loadAnimation()
 passwordInputHandler()
+
+
+
+// data = {
+//     "bob": [3, 6],
+//     "bill": [9, 12],
+//     "marvin": [11, 20],
+//     "bender": [10, 29],
+//     "hugh": [1, 15],
+//     "will": [12, 4],
+//     "riker": [11, 4],
+//     "howard": [10, 2]
+// }
+// cardFormat(data)
+
+
+
 
 
 
